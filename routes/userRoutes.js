@@ -1,10 +1,15 @@
 const express = require("express");
-const { createUser, getUserByUUID } = require("../controllers/userControllers");
+const passport = require("passport");
+const local = require('../strategies/local');
+const { ensureAuthenticated } = require('../strategies/ensureAuthenticated');
+const { createUser, getUserByUUID, logIn } = require("../controllers/userControllers");
 
 const router = express.Router();
 
 router
-    .post('/', createUser)
-    .get('/:uuid', getUserByUUID)
+    .post('/register', createUser)
+    .post('/login', passport.authenticate('local'), logIn)
+    .get('/:uuid', ensureAuthenticated, getUserByUUID);
+
 
 module.exports = router;
