@@ -14,17 +14,13 @@ passport.deserializeUser(async (email, done) => {
         const user = await User.findOne({
             where: { email }
         });
-
         if (user) {
             done(null, user);
         }
     }
-
     catch {
         done(err, null);
     }
-
-
 });
 
 

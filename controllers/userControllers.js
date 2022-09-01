@@ -2,39 +2,22 @@ const bcrypt = require('bcrypt');
 const { User } = require("../database/models");
 
 async function createUser(req, res) {
-    // Parse User information from request body
-    const { firstName, lastName, password, email, university } = req.body;
-
-    // Hash the submitted password
-    console.log(password);
-    const passwordHash = await bcrypt.hash(password, 10);
 
     try {
+        // Parse User information from request body
+        const { firstName, lastName, password, email, university } = req.body;
+
+        // Verify that email address has not already been used by another user
+        const emailExists = await User.findOne({ where: { email } });
+        if (emailExists) { return res.status(403).send('Email address already in use'); }
+
+        // Hash the submitted password
+        const passwordHash = await bcrypt.hash(password, 10);
+
         // Add User to database
         const newUser = await User.create({ firstName, lastName, passwordHash, email, university });
         console.log(`*** User '${firstName} ${lastName}' added to the database ***`);
         return res.send(newUser);
-    }
-
-    catch (err) {
-        console.log(err);
-        return res.sendStatus(500);
-    }
-}
-
-
-async function getUserByUUID(req, res) {
-    // Parse UUID from URL parameters
-    const uuid = req.params.uuid;
-
-    try {
-        // Retrieve the specified User from database
-        const user = await User.findOne({
-            where: { uuid }
-        });
-
-        console.log(`*** User with UUID '${uuid}' retrieved from the database ***`);
-        return res.send(user);
     }
 
     catch (err) {
@@ -54,4 +37,36 @@ async function logIn(req, res) {
 }
 
 
-module.exports = { createUser, getUserByUUID, logIn };
+async function logOut(req, res, next) {
+    
+    req.logout(function (err) {
+        res.clearCookie('connect.sid');
+        res.status(200).send('Logout Successful');
+    });
+}
+
+
+async function getUserByUUID(req, res) {
+
+    try {
+        // Parse UUID from URL parameter
+        const uuid = req.params.uuid;
+
+        // A user can only request their own UUID.
+        if (req.user.uuid !== uuid) {
+            console.log(`*** Access Denied to /users/:uuid ***`);
+            return res.sendStatus(401);
+        }
+        // Attempt to retrieve the specified User from database
+        const user = await User.findOne({ where: { uuid } });
+        console.log(`*** User with UUID '${uuid}' retrieved from the database ***`);
+        return res.send(user);
+    }
+    catch (err) {
+        console.log(err);
+        return res.sendStatus(500);
+    }
+}
+
+
+module.exports = { createUser, getUserByUUID, logIn, logOut };

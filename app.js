@@ -13,7 +13,7 @@ const PORT = 3000;
 
 app.use(session({
     secret: process.env.SESSION_SECRET,
-    cookie: { maxAge: 30000 },
+    cookie: { maxAge: (60000 * 30) },
     saveUninitialized: false,
     resave: false,
     store

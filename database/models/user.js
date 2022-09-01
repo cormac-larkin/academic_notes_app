@@ -21,16 +21,29 @@ module.exports = (sequelize, DataTypes) => {
   User.init({
     uuid: {
       type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4
+      defaultValue: DataTypes.UUIDV4,
+      allowNull: false
     },
     firstName: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    lastName: DataTypes.STRING,
-    passwordHash: DataTypes.STRING,
-    email: DataTypes.STRING,
-    university: DataTypes.STRING
+    lastName: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    passwordHash: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    university: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
   }, {
     sequelize,
     modelName: 'User',
