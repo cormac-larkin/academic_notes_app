@@ -32,9 +32,10 @@ passport.use(new LocalStrategy(
     async (email, password, done) => {
         // Try to find User with matching email in database
         const user = await User.findOne({ where: { email: email } }, (err, user) => {
-            if (err) { return done(err); }
-            if (!user) { return done(null, false); }
+            if (err) { return done(err); }           
         });
+
+        if (!user) { return done(null, false); }
 
         // If user with this email is found, compare passwords
         const passwordHash = user.passwordHash;

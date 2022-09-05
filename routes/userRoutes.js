@@ -7,7 +7,7 @@ const { createUser, getUserByUUID, logIn, logOut } = require("../controllers/use
 const router = express.Router();
 
 router
-    .post('/register', createUser)
+    .post('/register', createUser, passport.authenticate('local'), logIn)
     .post('/login', passport.authenticate('local'), logIn)
     .post('/logout', logOut)
     .get('/:uuid', ensureAuthenticated, getUserByUUID);

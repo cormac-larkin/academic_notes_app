@@ -1,7 +1,9 @@
 const bcrypt = require('bcrypt');
+const passport = require('passport');
+const local = require('../strategies/local');
 const { User } = require("../database/models");
 
-async function createUser(req, res) {
+async function createUser(req, res, next) {
 
     try {
         // Parse User information from request body
@@ -17,7 +19,9 @@ async function createUser(req, res) {
         // Add User to database
         const newUser = await User.create({ firstName, lastName, passwordHash, email, university });
         console.log(`*** User '${firstName} ${lastName}' added to the database ***`);
-        return res.send(newUser);
+
+        // Pass control to passport.authenticate and begin a session for the new User (send cookie)
+        next();
     }
 
     catch (err) {
@@ -38,7 +42,7 @@ async function logIn(req, res) {
 
 
 async function logOut(req, res, next) {
-    
+
     req.logout(function (err) {
         res.clearCookie('connect.sid');
         res.status(200).send('Logout Successful');
@@ -49,10 +53,10 @@ async function logOut(req, res, next) {
 async function getUserByUUID(req, res) {
 
     try {
-        // Parse UUID from URL parameter
+        // Parse requested UUID from URL parameter
         const uuid = req.params.uuid;
 
-        // A user can only request their own UUID.
+        // A user can only request their own user details.
         if (req.user.uuid !== uuid) {
             console.log(`*** Access Denied to /users/:uuid ***`);
             return res.sendStatus(401);
