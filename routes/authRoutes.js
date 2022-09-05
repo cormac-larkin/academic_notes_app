@@ -2,7 +2,7 @@ const express = require("express");
 const passport = require("passport");
 const local = require('../strategies/local');
 const { ensureAuthenticated } = require('../strategies/ensureAuthenticated');
-const { createUser, getUserByUUID, logIn, logOut } = require("../controllers/userControllers");
+const { createUser, getUserByUUID, logIn, logOut } = require("../controllers/authControllers");
 
 const router = express.Router();
 

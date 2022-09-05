@@ -20,7 +20,7 @@ async function createUser(req, res, next) {
         const newUser = await User.create({ firstName, lastName, passwordHash, email, university });
         console.log(`*** User '${firstName} ${lastName}' added to the database ***`);
 
-        // Pass control to passport.authenticate and begin a session for the new User (send cookie)
+        // Pass control to passport.authenticate to begin a session for the new User (send cookie)
         next();
     }
 

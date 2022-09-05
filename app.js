@@ -4,7 +4,8 @@ const express = require("express");
 const passport = require('passport');
 const cors = require('cors');
 const session = require('express-session');
-const userRoutes = require("./routes/userRoutes");
+const authRoutes = require("./routes/authRoutes");
+const classRoutes = require("./routes/classRoutes");
 const { sequelize } = require("./database/models");
 
 const store = new session.MemoryStore();
@@ -12,14 +13,7 @@ const store = new session.MemoryStore();
 const app = express();
 const PORT = 4000;
 
-app.use(cors({ origin: true, credentials: true}));
-
-// app.use((req, res, next) => {
-//     res.header('Access-Control-Allow-Origin', req.headers.origin);
-//     res.header('Access-Control-Allow-Credentials', true);
-//     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-//     next();
-//   });
+app.use(cors({ origin: true, credentials: true }));
 
 app.use(session({
     secret: process.env.SESSION_SECRET,
@@ -38,7 +32,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Routes to use
-app.use('/users', userRoutes);
+app.use('/auth', authRoutes);
+app.use('/classes', classRoutes);
 
 
 app.listen(PORT, async () => {
