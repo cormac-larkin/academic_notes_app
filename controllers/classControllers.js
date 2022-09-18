@@ -1,7 +1,7 @@
-const bcrypt = require('bcrypt');
 const passport = require('passport');
 const local = require('../strategies/local');
 const { Class } = require('../database/models');
+
 
 async function addClass(req, res) {
 
@@ -11,7 +11,7 @@ async function addClass(req, res) {
         const newClass = await Class.create({ className, studentID });
 
         console.log(`*** User '${req.user.firstName} ${req.user.lastName}' added a class '${className}' to the database ***`);
-        return res.send(req.body);
+        return res.send(newClass);
     }
 
     catch (err) {
@@ -20,4 +20,23 @@ async function addClass(req, res) {
     }
 }
 
-module.exports = { addClass };
+
+async function getClasses(req, res) {
+
+    try {
+        const studentID = req.user.id;
+        const allClasses = await Class.findAll({ where: { studentID } });
+
+        res.send(allClasses);
+    }
+
+    catch (err) {
+        console.log(err);
+        return res.sendStatus(500);
+    }
+}
+
+
+module.exports = { addClass, getClasses };
+
+
