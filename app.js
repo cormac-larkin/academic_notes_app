@@ -6,6 +6,7 @@ const cors = require('cors');
 const session = require('express-session');
 const authRoutes = require("./routes/authRoutes");
 const classRoutes = require("./routes/classRoutes");
+const noteRoutes = require("./routes/noteRoutes");
 const { sequelize } = require("./database/models");
 
 const store = new session.MemoryStore();
@@ -34,6 +35,7 @@ app.use(passport.session());
 // Routes to use
 app.use('/auth', authRoutes);
 app.use('/classes', classRoutes);
+app.use('/notes', noteRoutes);
 
 
 app.listen(PORT, async () => {
